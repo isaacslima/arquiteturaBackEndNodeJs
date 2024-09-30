@@ -4,6 +4,8 @@ import { UpdateProjectDto } from "./dto/update-project.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Project } from "./entities/projects.entity";
+import { PageService } from 'src/modules/pagination/page/page.service';
+import { DEFAULT_PAGE_SIZE, FilterDto } from 'src/modules/pagination/dto/filter.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -11,6 +13,7 @@ export class ProjectsService {
     constructor(
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,
+        private readonly pageService: PageService
     ) {}
 
     create(createProjectDto: CreateProjectDto) {
@@ -34,5 +37,17 @@ export class ProjectsService {
 
     async remove(id: number) {
         await this.projectRepository.delete(id);
+    }
+
+    findAllPaginated(filter?: FilterDto) {
+
+        if (!filter) {
+            return this.findAll();
+        }
+        
+        return this.pageService.paginate(this.projectRepository, {
+            page: filter.page,
+            pageSize: DEFAULT_PAGE_SIZE,
+        });
     }
 }
