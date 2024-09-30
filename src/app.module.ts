@@ -6,6 +6,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmConfig } from './modules/config/typeorm/typeorm.module';
+import * as redisStore from "cache-manager-redis-store";
 
 @Module({
   imports: [
@@ -13,8 +14,9 @@ import { TypeOrmConfig } from './modules/config/typeorm/typeorm.module';
     CacheModule.register(
       { 
         isGlobal: true,
+        store: redisStore,
         host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT
+        port: process.env.REDIS_PORT,
       }
     )
   ],
